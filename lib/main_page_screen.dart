@@ -19,7 +19,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
   //현재 페이지
   int _currentIndex = 0;
 
-  // 전체 상품 목록을 담을 변수
+  // 전체 상품 목록을 담을 변수 -> 10개만 담아야함 그냥 리스트 뷰 빌더에서 10개만 하면 될 듯함
   List<dynamic> product = [];
 
   // 선택된 옵션 인덱스 (0: 인기 매물, 1: 최신 매물, 2: 가격 인하)
@@ -63,6 +63,26 @@ class _MainPageScreenState extends State<MainPageScreen> {
     }
   }
 
+  //선택한 옵션에 따라서 정렬해주는 함수
+  List<dynamic> getDisplayProducts() {
+    List<dynamic> list = List.from(product);
+
+    switch (_selectedOptionIndex) {
+      case 0: // 인기 매물: 좋아요 수(likeCount) 내림차순
+        list.sort((a, b) => (b['likeCount'] ?? 0).compareTo(a['likeCount'] ?? 0));
+        break;
+      case 1: // 최신 등록: id 또는 등록일 내림차순
+        list.sort((a, b) => (b['id'] ?? 0).compareTo(a['id'] ?? 0));
+        break;
+      case 2: // 가격 인하: 가격(price) 오름차순
+        list.sort((a, b) => (a['price'] ?? 0).compareTo(b['price'] ?? 0));
+        break;
+    }
+
+    // 10개만 슬라이싱해서 반환 (데이터가 10개보다 적을 경우를 대비해 take 활용)
+    return list.take(10).toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,219 +97,267 @@ class _MainPageScreenState extends State<MainPageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // [수정: 화면 랜더링 시 정렬 및 슬라이싱된 10개 리스트를 가져옴]
+    final displayList = getDisplayProducts();
+
     return Scaffold(
-      backgroundColor: const Color(0xFF131313), // 배경색
-      body: EasyAnimatedIndexedStack(
-        index: _currentIndex,
+        backgroundColor: const Color(0xFF131313), // 배경색
+        body: EasyAnimatedIndexedStack(
+          index: _currentIndex,
 
-        children: [
-          //첫 페이지 : 홈
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
+          children: [
+            //첫 페이지 : 홈
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
 
-                  // 상단 로고 및 알림 버튼
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 20,
-                        ),
-                        child: Image.asset(
-                          'assets/images/logo_vertical.png',
-                          width: 100,
-                          height: 50,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.notifications,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // 검색 창
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: TextField(
-                      controller: _ctrl,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: "앨범명, 아티스트 검색",
-                        hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: Colors.white),
-                        ),
-                        prefixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.search,
-                            color: Colors.white.withOpacity(0.5),
+                    // 상단 로고 및 알림 버튼
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 20,
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo_vertical.png',
+                            width: 100,
+                            height: 50,
                           ),
                         ),
-                        suffixIcon: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Symbols.barcode_scanner,
-                            color: Colors.white.withOpacity(0.5),
+                        IconButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).clearSnackBars();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("현재 해당 기능은 준비중입니다."))
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // 검색 창
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: _ctrl,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "앨범명, 아티스트 검색",
+                          hintStyle: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: Colors.white),
+                          ),
+                          prefixIcon: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.search,
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Symbols.barcode_scanner,
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // 장르별 둘러보기 타이틀
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 18,
-                      ),
-                      child: const Text(
-                        '장르별 둘러보기',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                    // 장르별 둘러보기 타이틀
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+                            child: const Text(
+                              '장르별 둘러보기',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _currentIndex = 1;
+                                });
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '전체 보기',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white.withValues(alpha: 0.7)
+                                    ),
+                                  ),
+                                  SizedBox(width: 5,),
+
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                    size: 10,
+                                  )
+                                ],
+                              )
+                          )
+                        ],
                       ),
                     ),
-                  ),
 
-                  // 장르 버튼 1번째 줄
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildCard(
-                        imgPath: "assets/icons/rock.svg",
-                        text: "Rock",
-                      ),
-                      _buildCard(
-                        imgPath: "assets/icons/jazz.svg",
-                        text: "Jazz",
-                      ),
-                      _buildCard(imgPath: "assets/icons/pop.svg", text: "Pop"),
-                      _buildCard(
-                        imgPath: "assets/icons/hip-hop.svg",
-                        text: "Hip-hop",
-                      ),
-                    ],
-                  ),
-
-                  // 장르 버튼 2번째 줄
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildCard(
-                        imgPath: "assets/icons/electronic.svg",
-                        text: "Electronic",
-                      ),
-                      _buildCard(
-                        imgPath: "assets/icons/classical.svg",
-                        text: "Classical",
-                      ),
-                      _buildCard(
-                        imgPath: "assets/icons/rnb-soul.svg",
-                        text: "R&B-Soul",
-                      ),
-                      _buildCard(imgPath: "assets/icons/etc.svg", text: "기타"),
-                    ],
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  // 옵션 피터 및 전체보기
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      _buildOption(text: "인기 매물", index: 0),
-                      _buildOption(text: "최신 등록", index: 1),
-                      _buildOption(text: "가격 인하", index: 2),
-                      const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Text(
-                                '전체 보기',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white.withOpacity(0.6),
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                color: Colors.white.withOpacity(0.5),
-                                size: 12,
-                              ),
-                            ],
-                          ),
+                    // 장르 버튼 1번째 줄
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildCard(
+                          imgPath: "assets/icons/rock.svg",
+                          text: "Rock",
                         ),
-                      ),
-                    ],
-                  ),
+                        _buildCard(
+                          imgPath: "assets/icons/jazz.svg",
+                          text: "Jazz",
+                        ),
+                        _buildCard(imgPath: "assets/icons/pop.svg", text: "Pop"),
+                        _buildCard(
+                          imgPath: "assets/icons/hip-hop.svg",
+                          text: "Hip-hop",
+                        ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 15),
+                    // 장르 버튼 2번째 줄
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildCard(
+                          imgPath: "assets/icons/electronic.svg",
+                          text: "Electronic",
+                        ),
+                        _buildCard(
+                          imgPath: "assets/icons/classical.svg",
+                          text: "Classical",
+                        ),
+                        _buildCard(
+                          imgPath: "assets/icons/rnb-soul.svg",
+                          text: "R&B-Soul",
+                        ),
+                        _buildCard(imgPath: "assets/icons/etc.svg", text: "기타"),
+                      ],
+                    ),
 
-                  // 이미지 디자인 카드 영역(가로 스크롤)
-                  product.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.all(30.0),
-                          child: CircularProgressIndicator(),
-                        )
-                      : SizedBox(
-                          height: 275,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: product.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: _buildProductCard(product[index]),
-                              );
+                    const SizedBox(height: 15),
+
+                    // 옵션 피터 및 전체보기
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        _buildOption(text: "인기 매물", index: 0),
+                        _buildOption(text: "최신 등록", index: 1),
+                        _buildOption(text: "가격 인하", index: 2),
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _currentIndex = 1;
+                              });
                             },
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  child: Text(
+                                    '전체 보기',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  size: 12,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 30),
-                ],
+                    const SizedBox(height: 15),
+
+                    // 이미지 디자인 카드 영역(가로 스크롤)
+                    product.isEmpty
+                        ? const Padding(
+                      padding: EdgeInsets.all(30.0),
+                      child: CircularProgressIndicator(),
+                    )
+                        : SizedBox(
+                      height: 275,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        // [수정: 고정 10에서 가공된 리스트 길이로 변경하여 RangeError 방지]
+                        itemCount: displayList.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            // [수정: 가공 및 정렬된 displayList의 아이템을 전달]
+                            child: _buildProductCard(displayList[index]),
+                          );
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
-          ),
-          //여기까지가 인덱스 1
+            //여기까지가 인덱스 1
 
-          //검색화면
-          const SearchScreen(),
+            //검색화면
+            const SearchScreen(),
 
-          //마이페이지 화면
-          const Center(
-            child: Text(
-              "마이페이지, 내일 하면 됨",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            //마이페이지 화면
+            const Center(
+              child: Text(
+                "마이페이지, 내일 하면 됨",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             color: Color(0xFF131313),
@@ -330,7 +398,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
       if (price == null) return '0';
       return price.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-        (Match m) => '${m[1]},',
+            (Match m) => '${m[1]},',
       );
     }
 
@@ -378,7 +446,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2C2C2C).withOpacity(0.9),
+                        color: const Color(0xFF2C2C2C).withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -418,7 +486,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
                   Text(
                     item['artist'] ?? '',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.5),
                       fontSize: 13,
                     ),
                     maxLines: 1,
@@ -454,7 +522,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
           height: 55,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.3)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
           ),
           child: Center(
             child: Column(

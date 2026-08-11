@@ -229,7 +229,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                         ),
                                         child: Icon(
                                           Icons.person,
-                                          color: Colors.white.withOpacity(0.3),
+                                          color: Colors.white.withValues(alpha: 0.3),
                                         ),
                                       ),
 
@@ -319,7 +319,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     "${data!['conditionDescription']}",
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.white.withOpacity(0.7),
+                                      color: Colors.white.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],
@@ -350,7 +350,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     "${data!['description']}",
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.white.withOpacity(0.7),
+                                      color: Colors.white.withValues(alpha: 0.7),
                                     ),
                                   ),
                                 ],
@@ -385,9 +385,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                           '가격',
                                           style: TextStyle(
                                             fontSize: 10,
-                                            color: Colors.white.withOpacity(
-                                              0.7,
-                                            ),
+                                            color: Colors.white.withValues(alpha: 0.7)
                                           ),
                                         ),
 
@@ -418,9 +416,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                           '거래 방식',
                                           style: TextStyle(
                                             fontSize: 10,
-                                            color: Colors.white.withOpacity(
-                                              0.7,
-                                            ),
+                                            color: Colors.white.withValues(alpha: 0.7)
                                           ),
                                         ),
 
@@ -459,7 +455,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(

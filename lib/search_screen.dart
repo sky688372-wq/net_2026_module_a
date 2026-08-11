@@ -392,7 +392,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("검색 결과 ${_totalCount}개", style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                    Text("검색 결과 $_totalCount개", style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                     DropdownButton<String>(
                       value: _selectedSort,
                       dropdownColor: const Color(0xFF252525),

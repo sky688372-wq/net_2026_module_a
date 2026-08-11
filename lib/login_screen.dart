@@ -14,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  static var token = "";
 
   bool _isPasswordHidden = true; // 기본적으로 가림 처리
 
@@ -92,6 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
         await prefs.setString('token', data['data']['token']);
 
         _showSnackBar("로그인 성공");
+
+        if(!mounted) {
+          return;
+        }
 
         Navigator.pushReplacement(
           context,
