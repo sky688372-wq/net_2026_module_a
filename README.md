@@ -12,5 +12,9 @@
 ### 3. 홈 화면
 <img width="400" height="867" alt="Screen_recording_20260811_110401 (1)" src="https://github.com/user-attachments/assets/357517d8-45a9-4e13-8d16-29822f20372c" />
 
+### 4. 상세페이지
+<img width="400" height="867" alt="Screen_recording_20260811_112100 (2)" src="https://github.com/user-attachments/assets/e609d869-736a-4144-8a15-efbcb0a0daf5" />
+
+
 
 
