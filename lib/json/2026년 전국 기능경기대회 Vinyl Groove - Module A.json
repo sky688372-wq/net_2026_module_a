@@ -1,0 +1,262 @@
+{
+  "version": 6,
+  "entities": [
+    {
+      "entity": {
+        "type": "Project",
+        "description": "##### Authentication\n- Header: `Authorization: Bearer ${\"token\"}` 또는\n- Query: `userId=${userId}`\n\n##### Environments\n- `baseUrl`: API 서버 호스트\n- `token`: Bearer 토큰\n- `userId`: 사용자 ID (인증 대체 시)",
+        "id": "9c020013-ee54-40be-a506-eb0ea8e36acd",
+        "name": "2026년 전국 기능경기대회 Vinyl Groove - Module A"
+      },
+      "children": [
+        {
+          "entity": {
+            "type": "Service",
+            "id": "c2482efc-09b7-43a5-84f8-e77a739c23dd",
+            "name": "001. 인증"
+          },
+          "children": [
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "https://tools.ietf.org/html/rfc7231#section-4.3",
+                  "name": "POST",
+                  "requestBody": true
+                },
+                "body": {
+                  "bodyType": "Text",
+                  "textBody": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"Test1234!\"\n}"
+                },
+                "uri": {
+                  "scheme": {
+                    "name": "http",
+                    "version": "V11"
+                  },
+                  "host": "${baseUrl}",
+                  "path": "/auth/login"
+                },
+                "description": "##### Request Body\n| 필드 | 타입 | 필수 | 설명 |\n|---|---|---|---|\n| email | string | Y | 이메일 |\n| password | string | Y | 비밀번호 |\n\n##### 200 OK\n```\n{\n    \"success\": true,\n    \"message\": \"로그인 성공\",\n    \"data\": {\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxx.yyy\",\n        \"user\": { \"id\": 1, \"email\": \"test@example.com\", \"name\": \"홍길동\" }\n    }\n}\n```\n\n##### 400 Bad Request - 유효성 검사 실패\n검증 규칙:\n- email: 필수, \"@\" 포함, \".\" 포함, \"@\" 앞에 \".\" 사용 불가\n- password: 필수, 6자 이상, 대문자 1자 이상, 소문자 1자 이상\n\n```\n{\n    \"success\": false,\n    \"message\": \"유효성 검사 실패\",\n    \"errors\": [\n        { \"code\": \"INVALID_FORMAT\", \"field\": \"email\", \"message\": \"올바른 이메일 형식을 입력해주세요.\" },\n        { \"code\": \"INVALID_LENGTH\", \"field\": \"password\", \"message\": \"비밀번호는 6자 이상이어야 합니다.\" }\n    ]\n}\n```\n\n오류 코드:\n| code | field | message |\n|---|---|---|\n| REQUIRED | email | 이메일을 입력해주세요. |\n| INVALID_FORMAT | email | 올바른 이메일 형식을 입력해주세요. |\n| REQUIRED | password | 비밀번호를 입력해주세요. |\n| INVALID_LENGTH | password | 비밀번호는 6자 이상이어야 합니다. |\n| INVALID_FORMAT | password | 비밀번호는 대문자와 소문자를 각 1자 이상 포함해야 합니다. |\n\n##### 401 Unauthorized\n```\n{\n    \"success\": false,\n    \"message\": \"로그인 실패\",\n    \"errors\": [\n        { \"code\": \"INVALID_CREDENTIALS\", \"message\": \"이메일 또는 비밀번호가 올바르지 않습니다.\" }\n    ]\n}\n```",
+                "id": "a4a44d1b-9886-48a2-9cc9-5c5385ebaddb",
+                "name": "로그인",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "assertions": []
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "https://tools.ietf.org/html/rfc7231#section-4.3",
+                  "name": "POST",
+                  "requestBody": true
+                },
+                "body": {
+                  "bodyType": "Text",
+                  "textBody": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"Test1234!\",\n    \"name\": \"홍길동\",\n    \"phone\": \"010-1234-5678\"\n}"
+                },
+                "uri": {
+                  "scheme": {
+                    "name": "http",
+                    "version": "V11"
+                  },
+                  "host": "${baseUrl}",
+                  "path": "/auth/signup"
+                },
+                "description": "##### Request Body\n| 필드 | 타입 | 필수 | 설명 |\n|---|---|---|---|\n| email | string | Y | 이메일 |\n| password | string | Y | 비밀번호 |\n| name | string | Y | 이름 (한글 또는 영문) |\n| phone | string | Y | 휴대폰 번호 (010-XXXX-XXXX) |\n\n##### 200 OK\n```\n{\n    \"success\": true,\n    \"message\": \"회원가입이 완료되었습니다.\",\n    \"data\": {\n        \"id\": 1,\n        \"email\": \"test@example.com\",\n        \"name\": \"홍길동\",\n        \"phone\": \"010-1234-5678\",\n        \"createdAt\": \"2026-05-28T09:00:00Z\"\n    }\n}\n```\n\n##### 400 Bad Request - 유효성 검사 실패\n검증 규칙:\n- email: \"@\" 포함, \".\" 포함, \"@\" 앞에 \".\" 사용 불가\n- password: 8자 이상, 대/소문자, 숫자, 특수문자 각 1자 이상\n- name: 한글 또는 영문만 허용\n- phone: 숫자만 허용\n\n```\n{\n    \"success\": false,\n    \"message\": \"유효성 검사 실패\",\n    \"errors\": [\n        { \"code\": \"INVALID_FORMAT\", \"field\": \"email\", \"message\": \"올바른 이메일 형식을 입력해주세요.\" },\n        { \"code\": \"INVALID_PASSWORD\", \"field\": \"password\", \"message\": \"비밀번호는 8자 이상, 대/소문자, 숫자, 특수문자를 각 1자 이상 포함해야 합니다.\" },\n        { \"code\": \"INVALID_FORMAT\", \"field\": \"name\", \"message\": \"이름은 한글 또는 영문만 입력 가능합니다.\" }\n    ]\n}\n```\n\n##### 409 Conflict\n```\n{\n    \"success\": false,\n    \"message\": \"회원가입 실패\",\n    \"errors\": [ { \"code\": \"EMAIL_ALREADY_EXISTS\", \"message\": \"이미 가입된 이메일입니다.\" } ]\n}\n```",
+                "id": "7b972522-6a93-4611-af77-f60875e381d9",
+                "name": "회원가입",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "assertions": []
+              }
+            }
+          ]
+        },
+        {
+          "entity": {
+            "type": "Service",
+            "id": "faf4961b-4f21-43a0-90c8-4415284aa9d7",
+            "name": "002. 상품 조회"
+          },
+          "children": [
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "https://tools.ietf.org/html/rfc7231#section-4.3",
+                  "name": "GET"
+                },
+                "body": {
+                  "bodyType": "Text",
+                  "textBody": ""
+                },
+                "uri": {
+                  "scheme": {
+                    "name": "http",
+                    "version": "V11"
+                  },
+                  "host": "${baseUrl}",
+                  "path": "/products",
+                  "query": {
+                    "delimiter": "&",
+                    "items": [
+                      {
+                        "enabled": true,
+                        "name": "sort",
+                        "value": "recent"
+                      },
+                      {
+                        "enabled": false,
+                        "name": "limit",
+                        "value": "10"
+                      },
+                      {
+                        "enabled": false,
+                        "name": "keyword",
+                        "value": ""
+                      },
+                      {
+                        "enabled": false,
+                        "name": "genres",
+                        "value": ""
+                      },
+                      {
+                        "enabled": false,
+                        "name": "conditions",
+                        "value": ""
+                      },
+                      {
+                        "enabled": false,
+                        "name": "minPrice",
+                        "value": "1000"
+                      },
+                      {
+                        "enabled": false,
+                        "name": "maxPrice",
+                        "value": "1000000"
+                      },
+                      {
+                        "enabled": false,
+                        "name": "tradeMethod",
+                        "value": ""
+                      },
+                      {
+                        "enabled": true,
+                        "name": "page",
+                        "value": "1"
+                      },
+                      {
+                        "enabled": true,
+                        "name": "size",
+                        "value": "12"
+                      },
+                      {
+                        "enabled": true,
+                        "name": "userId",
+                        "value": "${userId}"
+                      }
+                    ]
+                  }
+                },
+                "description": "##### Query Parameters\n| 이름 | 타입 | 설명 | 값 |\n|---|---|---|---|\n| sort | string | 정렬 | `popular` / `recent` / `price_asc` |\n| limit | number | 결과 개수 제한 | |\n| keyword | string | 앨범명/아티스트명 검색어 | |\n| genres | string | 장르 코드 콤마 구분 | `ROCK,JAZZ,POP,HIPHOP,ELECTRONIC,CLASSICAL,RNB_SOUL,ETC` |\n| conditions | string | 음반 상태 콤마 구분 | `M,NM,VG+,VG,G` |\n| minPrice | number | 최소 가격 | 1000 ~ |\n| maxPrice | number | 최대 가격 | ~ 1000000 |\n| tradeMethod | string | 거래 방식 | `DIRECT` / `DELIVERY` / `BOTH` |\n| page | number | 페이지 번호 | |\n| size | number | 페이지 크기 | |\n\n##### 200 OK - 페이지네이션\n```\n{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"albumName\": \"Blonde\",\n            \"artist\": \"Frank Ocean\",\n            \"genre\": \"RNB_SOUL\",\n            \"condition\": \"M\",\n            \"price\": 95000,\n            \"tradeMethod\": \"DIRECT\",\n            \"albumImage\": \"https://api.vinylgroove.com/images/album/blonde.jpg\",\n            \"likeCount\": 320,\n            \"createdAt\": \"2026-05-20T10:00:00Z\"\n        }\n    ],\n    \"pagination\": { \"page\": 1, \"size\": 12, \"totalCount\": 50, \"totalPages\": 5, \"hasNext\": true }\n}\n```\n\n##### 200 OK - limit 사용 (페이지네이션 없음)\n```\n{\n    \"success\": true,\n    \"data\": [ /* ... */ ],\n    \"totalCount\": 10\n}\n```",
+                "id": "236f1df7-2c78-4803-8315-a61634bef978",
+                "name": "상품 목록 조회",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer ${\"token\"}"
+                  }
+                ],
+                "assertions": []
+              }
+            },
+            {
+              "entity": {
+                "type": "Request",
+                "method": {
+                  "link": "https://tools.ietf.org/html/rfc7231#section-4.3",
+                  "name": "GET"
+                },
+                "body": {
+                  "bodyType": "Text",
+                  "textBody": ""
+                },
+                "uri": {
+                  "scheme": {
+                    "name": "http",
+                    "version": "V11"
+                  },
+                  "host": "${baseUrl}",
+                  "path": "/products/1",
+                  "query": {
+                    "delimiter": "&",
+                    "items": [
+                      {
+                        "enabled": true,
+                        "name": "userId",
+                        "value": "${userId}"
+                      }
+                    ]
+                  }
+                },
+                "description": "##### Path Parameters\n| 이름 | 타입 | 설명 |\n|---|---|---|\n| id | number | 상품 ID |\n\n##### 200 OK\n```\n{\n    \"success\": true,\n    \"data\": {\n        \"id\": 1,\n        \"albumName\": \"Blonde\",\n        \"artist\": \"Frank Ocean\",\n        \"genre\": \"RNB_SOUL\",\n        \"condition\": \"M\",\n        \"conditionDescription\": \"Mint. 개봉했으나 새것과 다름없는 완벽한 상태입니다.\",\n        \"price\": 95000,\n        \"tradeMethod\": \"DIRECT\",\n        \"description\": \"한정판 블랙 프라이데이 에디션. 희귀본.\",\n        \"albumImage\": \"https://api.vinylgroove.com/images/album/blonde.jpg\",\n        \"seller\": {\n            \"id\": 10,\n            \"name\": \"Analog Shop\",\n            \"email\": \"analog@example.com\",\n            \"profileImage\": \"https://api.vinylgroove.com/images/profile/seller010.jpg\"\n        },\n        \"likeCount\": 320,\n        \"createdAt\": \"2026-05-20T10:00:00Z\"\n    }\n}\n```\n\n##### condition 코드 매핑 (conditionDescription)\n| code | description |\n|---|---|\n| SS | 미개봉 새상품. 완벽한 상태입니다. |\n| M | Mint. 개봉했으나 새것과 다름없는 완벽한 상태입니다. |\n| NM | Near Mint. 거의 새것에 가까운 상태로, 미세한 사용감만 있습니다. |\n| EX | Excellent. 전체적으로 깨끗하며, 약간의 사용감이 있습니다. |\n| VG+ | Very Good Plus. 양호한 상태로, 재생에 문제가 없습니다. |\n| VG | Very Good. 사용감이 있으나 재생에 큰 문제가 없습니다. |\n| G | Good. 사용감이 많으나 재생은 가능합니다. |\n\n##### 404 Not Found\n```\n{\n    \"success\": false,\n    \"message\": \"상품을 찾을 수 없습니다.\",\n    \"errors\": [ { \"code\": \"PRODUCT_NOT_FOUND\", \"message\": \"존재하지 않는 상품입니다.\" } ]\n}\n```",
+                "id": "737b2ff9-c414-4626-a509-475247d0d483",
+                "name": "상품 상세 조회",
+                "headers": [
+                  {
+                    "enabled": true,
+                    "name": "Authorization",
+                    "value": "Bearer ${\"token\"}"
+                  }
+                ],
+                "assertions": []
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "e10eb19c-3216-4379-b7a3-9deb8d09a416",
+      "name": "2026년 전국 기능경기대회 Vinyl Groove - Module A",
+      "variables": {
+        "5b565a9e-ffbc-4a76-b1df-ce84bdd9f7f6": {
+          "createdAt": "2026-05-28T18:00:00.000+09:00",
+          "name": "baseUrl",
+          "value": "http://api.vinylgroove.com",
+          "enabled": true,
+          "private": false
+        },
+        "a0cd17c1-644a-4490-9670-e44efee294bd": {
+          "createdAt": "2026-05-28T18:00:00.000+09:00",
+          "name": "token",
+          "value": "token_example",
+          "enabled": true,
+          "private": false
+        },
+        "0232dfa4-f9ea-43f5-84bf-5feec27417d5": {
+          "createdAt": "2026-05-28T18:00:00.000+09:00",
+          "name": "userId",
+          "value": "1",
+          "enabled": true,
+          "private": false
+        }
+      }
+    }
+  ]
+}
