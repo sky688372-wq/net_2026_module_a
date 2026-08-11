@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:net_2026/detail_screen.dart';
+import 'package:net_2026/search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_animated_indexed_stack/easy_animated_indexed_stack.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class MainPageScreen extends StatefulWidget {
   const MainPageScreen({super.key});
@@ -139,7 +141,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
                         suffixIcon: IconButton(
                           onPressed: () {},
                           icon: Icon(
-                            Icons.qr_code,
+                            Symbols.barcode_scanner,
                             color: Colors.white.withOpacity(0.5),
                           ),
                         ),
@@ -273,16 +275,7 @@ class _MainPageScreenState extends State<MainPageScreen> {
           //여기까지가 인덱스 1
 
           //검색화면
-          const Center(
-            child: Text(
-              "검색 페이지, 내일 하면 됨",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          const SearchScreen(),
 
           //마이페이지 화면
           const Center(
