@@ -393,6 +393,23 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
 
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      spreadRadius: 0.7,
+                    )
+                  ]
+                ),
+
+                child: Divider(
+                  color: Colors.white.withValues(alpha: 0.04),
+                  height: 10,
+                ),
+              ),
+
               const SizedBox(height: 15),
 
               // 검색 결과 개수 및 정렬
