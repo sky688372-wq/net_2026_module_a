@@ -243,7 +243,13 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        
+                        SnackBar(content: Text('현재 해당 기능은 준비중입니다.')) //여기 나중에 모뮬 B에서 바꾼다.
+                      );
+                    },
                     icon: const Icon(Icons.notifications, color: Colors.white),
                   ),
                 ],
@@ -269,7 +275,12 @@ class _SearchScreenState extends State<SearchScreen> {
                       icon: Icon(Icons.search, color: Colors.white.withValues(alpha: 0.5)),
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("현재 해당 기능은 준비중입니다."))
+                        );
+                      },
                       icon: Icon(Symbols.barcode_scanner, color: Colors.white.withValues(alpha: 0.5)),
                     ),
                   ),
