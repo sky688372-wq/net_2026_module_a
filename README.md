@@ -17,6 +17,3 @@
 
 ### 5. 검색 화면
 <img width="400" height="867" alt="Screen_recording_20260811_131133" src="https://github.com/user-attachments/assets/354d57d8-c437-41b0-8036-a4487a4bd9ef" />
-
-
-
