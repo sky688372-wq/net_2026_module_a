@@ -345,7 +345,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                         onChangeEnd: (values) => fetchProducts(),
                                         onChanged: (RangeValues values) {
                                           setState(() {
-                                            _priceRange = values;
+                                            // 1. start, end가 min(1000) ~ max(1000000) 범위를 절대 넘지 않도록 제한
+                                            double safeStart = values.start.clamp(1000.0, 1000000.0);
+                                            double safeEnd = values.end.clamp(1000.0, 1000000.0);
+
+                                            // 2. start가 end보다 크지 않도록 보장
+                                            if (safeStart > safeEnd) {
+                                              safeStart = safeEnd;
+                                            }
+
+                                            _priceRange = RangeValues(safeStart, safeEnd);
                                           });
                                         },
                                       ),
